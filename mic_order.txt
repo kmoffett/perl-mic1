@@ -1,0 +1,22 @@
+Initializing the Mic1:
+1)	Set the "+1" register to 0x0001
+2)	Set the "-1" register to 0xFFFF
+3)	Set the "0" register to 0x0000
+4)	Set the AMASK register to 0x0FFF
+5)	Set the SMASK register to 0x00FF
+6)	Set the MPC thingy to 0x00
+
+while(1) {
+Steps to execute a Mic1 instruction:
+1)	mir = decode(control_store[mpc]);
+2)	a_latch = registers[mir.a];
+3)	b_latch = registers[mir.b];
+4)	if (mir.mar) mar = b_latch;
+5)	if (mir.amux) amux = mbr; else amux = a_latch;
+6)	alu = do_alu(mir.alu,amux,b_latch,&n_flag,&z_flag);
+7)	shifter = do_shifter(mir.sh,alu);
+8)	if (mir.mbr) mbr = shifter;
+9)	if (mir.enc) registers[mir.c] = shifter;
+10)	if (check_jump(mir.cond,n_flag,z_flag)) mpc = addr; else mpc++;
+11) do_memory(mir.rd,mir.wr,mar,&mbr,&reading,&writing);
+
